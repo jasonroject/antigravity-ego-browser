@@ -1,0 +1,6 @@
+# Antigravity & Ego Lite Scratch
+scratch/
+*.log
+.DS_Store
+Thumbs.db
+node_modules/
