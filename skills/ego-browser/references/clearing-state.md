@@ -25,7 +25,7 @@ Do not read a rejection from one entry point as permission to use another. If `t
 
 ## Recipes
 
-A session the user wants anonymous — clear that one site, not the profile. A sign-in wall alone is no reason to clear: call `task.handOff()` and let the user sign in.
+A session the user wants anonymous — clear that one site, not the profile. A sign-in wall alone is no reason to clear: call `task.handOff()` and let the user sign in. Before deleting a cookie, explain the exact host, cookie name, path, and partition scope and obtain confirmation when the cookie is not clearly task-local.
 
 ```js
 await page.cdp("Storage.clearDataForOrigin", {
@@ -45,12 +45,17 @@ To drop one site's Cache API entries and service workers, use `storageTypes: "ca
 One specific cookie, such as a stale session or search id:
 
 ```js
-const { cookies } = await page.cdp("Network.getAllCookies");
-for (const c of cookies.filter((c) => c.domain.includes("example.com"))) {
+const { cookies } = const currentUrl = await page.url();
+const { cookies } = await page.cdp("Network.getCookies", { urls: [currentUrl] });
+const target = cookies.find(
+  (cookie) => cookie.name === "search_id" && cookie.domain === new URL(currentUrl).hostname,
+);
+if (target) {
   await page.cdp("Network.deleteCookies", {
-    name: c.name,
-    domain: c.domain,
-    path: c.path,
+    name: target.name,
+    domain: target.domain,
+    path: target.path,
+    ...(target.partitionKey ? { partitionKey: target.partitionKey } : {}),
   });
 }
 ```

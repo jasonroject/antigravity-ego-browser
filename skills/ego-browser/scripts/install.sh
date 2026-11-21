@@ -67,10 +67,14 @@ cleanup() {
 	fi
 }
 
-strip_quarantine_attributes() {
+verify_app_signature() {
 	app_path="$1"
-	run_with_sudo_if_needed xattr -dr com.apple.quarantine "$app_path" \
-		>/dev/null 2>&1 || true
+	require_command codesign
+	require_command spctl
+	codesign --verify --deep --strict --verbose=2 "$app_path" >/dev/null 2>&1 ||
+		die "downloaded $APP_NAME failed code-signature verification"
+	spctl --assess --type execute --verbose=2 "$app_path" >/dev/null 2>&1 ||
+		die "downloaded $APP_NAME failed Gatekeeper assessment"
 }
 
 trap cleanup EXIT HUP INT TERM
@@ -182,17 +186,20 @@ install_ego_lite() {
 		find_ego_browser_in_app "$staged_app" >/dev/null ||
 			die "installed $APP_NAME does not contain $EGO_BROWSER_HELPER_NAME"
 
-		# Strip quarantine attributes to prevent Gatekeeper from blocking the first launch.
-		log "Removing quarantine attributes from $APP_NAME ..."
-		xattr -dr com.apple.quarantine "$staged_app" \
-			>/dev/null 2>&1 || true
+		verify_app_signature "$staged_app"
 
+		# Replace on the same volume and keep a rollback copy until the new app is in place.
+		backup_app="$TEMP_DIR/$APP_BUNDLE_NAME.previous"
 		if [ -d "$APP_PATH" ]; then
-			run_with_sudo_if_needed rm -rf "$APP_PATH" ||
-				die "failed to replace existing $APP_PATH"
+			run_with_sudo_if_needed mv "$APP_PATH" "$backup_app" ||
+				die "failed to stage the existing $APP_NAME for rollback"
 		fi
-		run_with_sudo_if_needed mv "$staged_app" "$APP_PATH" ||
+		if ! run_with_sudo_if_needed mv "$staged_app" "$APP_PATH"; then
+			if [ -d "$backup_app" ]; then
+				run_with_sudo_if_needed mv "$backup_app" "$APP_PATH" || true
+			fi
 			die "failed to move $APP_NAME to $APP_PATH"
+		fi
 		return 0
 	fi
 
@@ -224,7 +231,7 @@ main() {
 			die "$APP_NAME install completed, but app was not found"
 	fi
 
-	strip_quarantine_attributes "$installed_app_path"
+	# Preserve the downloaded app's quarantine state until Gatekeeper approves its first launch.
 	cleanup
 
 	log "Launching $APP_NAME ..."
