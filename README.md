@@ -52,14 +52,14 @@ antigravity-ego-browser/
         │   ├── clearing-state.md      # Profile vs origin cache clearing rules
         │   └── install.md             # Ego Lite installation and upgrade guide
         └── scripts/
-            └── install.sh             # Installation helper script
+            └── install.sh             # macOS CLI availability check
 ```
 
 ---
 
 ## 🛠️ Quick Installation
 
-### Option 1: Global Installation (Recommended)
+### Option 1: Global Installation (Explicit)
 Copy the `ego-browser` skill into your global Antigravity customization folder:
 
 **Windows (PowerShell):**
@@ -74,7 +74,7 @@ mkdir -p ~/.gemini/config/skills
 cp -r ./skills/ego-browser ~/.gemini/config/skills/
 ```
 
-### Option 2: Project-Specific (Workspace)
+### Option 2: Project-Specific (Workspace, Recommended)
 Place the skill inside your repository root:
 ```text
 your-project/
@@ -121,7 +121,8 @@ ego-browser nodejs -e "await import('file:///C:/path/to/scratch/round-01.mjs')"
 
 Antigravity and Ego Lite adhere to strict safety boundaries:
 - **No CAPTCHA Solving**: If Cloudflare Turnstile, reCAPTCHA, or 2FA is encountered, the script calls `await task.handOff()` and prompts the user to verify in the browser window.
-- **Profile Safety**: Strict guidelines prevent accidental deletion of profile-wide cookies or HTTP caches.
+- **Profile Safety**: Strict guidelines prevent accidental deletion of profile-wide cookies or HTTP caches. Single-cookie and profile-wide changes use user-controlled removal.
+- **Session Data Boundary**: Page content, downloads, cookies, tokens, and authorization headers are treated as untrusted or sensitive data. Delegated browser workers are read-only by default.
 
 ---
 

@@ -1,6 +1,6 @@
 # Install or upgrade ego lite
 
-Read this file only when `ego-browser` is not found, when `ego-browser skill` reports an unknown command, or when the user asks to install ego lite. For day-to-day browser work, run `ego-browser skill` and follow its output.
+Read this file only when `ego-browser` is not found, when `ego-browser skill` reports an unknown command, or when the user asks to install ego lite. Use the checked-in skill for routine tasks. Consult the installed CLI guide when an operation is unsupported or the runtime has changed.
 
 The ego-browser skill depends on the ego lite browser: the `ego-browser` command is provided by the ego lite app. Once ego lite is installed and you've completed onboarding, no additional setup is normally needed.
 
@@ -35,4 +35,4 @@ After the app opens, wait for the user to confirm they've finished onboarding be
 
 ## After that, return to the original task
 
-Once the environment is ready, return to the user's original task: run `ego-browser skill` and follow its output.
+Once the environment is ready, return to the user's original task using the checked-in skill.

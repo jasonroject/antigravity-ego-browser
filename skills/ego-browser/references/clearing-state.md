@@ -42,28 +42,6 @@ await page.cdp("Page.reload", { ignoreCache: true });
 
 To drop one site's Cache API entries and service workers, use `storageTypes: "cache_storage,service_workers"` with the same `Storage.clearDataForOrigin` call.
 
-One specific cookie, such as a stale session or search id:
+## Single-cookie and profile-wide changes
 
-```js
-const { cookies } = const currentUrl = await page.url();
-const { cookies } = await page.cdp("Network.getCookies", { urls: [currentUrl] });
-const target = cookies.find(
-  (cookie) => cookie.name === "search_id" && cookie.domain === new URL(currentUrl).hostname,
-);
-if (target) {
-  await page.cdp("Network.deleteCookies", {
-    name: target.name,
-    domain: target.domain,
-    path: target.path,
-    ...(target.partitionKey ? { partitionKey: target.partitionKey } : {}),
-  });
-}
-```
-
-`Network.deleteCookies` removes `httpOnly` cookies, which `document.cookie` cannot. Needing to clear an `httpOnly` cookie is not a reason to widen the scope to the whole profile.
-
-## Profile-wide clears need user approval
-
-Treat the three profile-wide commands the way you treat `claimTaskSpace()` and `takeOverTaskSpace()`: only after user approval. Before asking, confirm a scoped command cannot do the job — clearing one site's data is almost always what a single-site problem calls for.
-
-When you do need one, tell the user what it costs before running it: how many cookies and domains the profile holds (`Network.getAllCookies`), and which other task spaces share the profile (`listTaskSpaces()` entries carry `profileId` when the runtime reports it). Signing the user out of every site on that profile is not something the agent can put back, and the user may not connect the loss to this task.
+For a specific cookie, prefer user-controlled removal. Identify the exact host, name, path and partition with the user before handoff. Do not enumerate the profile or log cookie values. If the user requests a profile-wide clear, explain that it can affect unrelated tabs and sites, then hand off to the browser settings so the user controls the operation.
