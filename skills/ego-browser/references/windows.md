@@ -12,14 +12,22 @@ Always use the **Two-Step Pattern**:
 
 ### Step 1: Write the `.mjs` file using Antigravity's `write_file` tool
 Save your automation script in the Antigravity conversation scratch directory:
-- Path: `C:/Users/Administrator/.gemini/antigravity/brain/<conversation-id>/scratch/ego/round-01.mjs`
+- Path: `C:/path/to/conversation/scratch/ego/round-01.mjs`
 - Using `write_file` guarantees UTF-8 encoding and avoids PowerShell string escaping or truncation issues.
 
 ### Step 2: Execute with a clean one-line import
 Run via `run_command`:
 
 ```powershell
-ego-browser nodejs -e "await import('file:///C:/Users/Administrator/.gemini/antigravity/brain/<conversation-id>/scratch/ego/round-01.mjs')"
+ego-browser nodejs -e "await import('file:///C:/path/to/conversation/scratch/ego/round-01.mjs')"
+```
+
+For an actual Windows path, build the file URL from PowerShell. The path below includes a space to show the quoting pattern.
+
+```powershell
+$egoRoundPath = 'C:\path with spaces\scratch\ego\round-01.mjs'
+$egoRoundUri = ([uri]::new($egoRoundPath)).AbsoluteUri.Replace("'", "%27")
+ego-browser nodejs -e "await import('$egoRoundUri')"
 ```
 
 > [!IMPORTANT]
