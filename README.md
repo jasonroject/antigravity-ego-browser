@@ -4,13 +4,13 @@
 [![Ego Lite](https://img.shields.io/badge/Ego%20Lite-v0.6.3%2B-orange.svg)](https://lite.ego.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-An optimized, high-performance browser automation skill for **Google Antigravity**, built on top of [Ego Lite](https://lite.ego.app/) (the Chromium browser designed for both AI Agents and humans with preserved session logins).
+An optimized, high-performance browser automation skill for the **Google Antigravity desktop client on Windows**, built on top of [Ego Lite](https://lite.ego.app/) (the Chromium browser designed for both AI Agents and humans with preserved session logins).
 
 ---
 
 ## 💡 Why Re-Architect for Antigravity?
 
-The original `ego-browser` skill was authored for the OpenAI Codex CLI ecosystem. When run inside Google Antigravity (especially on Windows), it encountered significant architectural frictions:
+The original `ego-browser` skill was authored for the OpenAI Codex CLI ecosystem. When run inside Google Antigravity on Windows, it encountered significant architectural frictions:
 
 | Dimension | Legacy Codex Implementation | Antigravity Native (`antigravity-ego-browser`) |
 | :--- | :--- | :--- |
@@ -50,16 +50,17 @@ antigravity-ego-browser/
         │   ├── patterns.md            # Production-ready ESM automation templates
         │   ├── selectors.md           # Semantic snapshot (@ref) & locator guide
         │   ├── clearing-state.md      # Profile vs origin cache clearing rules
-        │   └── install.md             # Ego Lite installation and upgrade guide
-        └── scripts/
-            └── install.sh             # Installation helper script
+        │   ├── install.md             # Windows installation and upgrade entry point
+        │   └── install-windows.md     # Windows runtime and PATH checks
 ```
 
 ---
 
 ## 🛠️ Quick Installation
 
-### Option 1: Global Installation (Recommended)
+Install and onboard [Ego Lite for Windows](skills/ego-browser/references/install-windows.md) first. Then install the skill for your Antigravity client.
+
+### Option 1: Global Installation (Explicit)
 Copy the `ego-browser` skill into your global Antigravity customization folder:
 
 **Windows (PowerShell):**
@@ -68,13 +69,7 @@ New-Item -ItemType Directory -Force "$env:USERPROFILE\.gemini\config\skills"
 Copy-Item -Recurse -Force ".\skills\ego-browser" "$env:USERPROFILE\.gemini\config\skills\"
 ```
 
-**macOS / Linux:**
-```bash
-mkdir -p ~/.gemini/config/skills
-cp -r ./skills/ego-browser ~/.gemini/config/skills/
-```
-
-### Option 2: Project-Specific (Workspace)
+### Option 2: Project-Specific (Workspace, Recommended)
 Place the skill inside your repository root:
 ```text
 your-project/
@@ -121,7 +116,8 @@ ego-browser nodejs -e "await import('file:///C:/path/to/scratch/round-01.mjs')"
 
 Antigravity and Ego Lite adhere to strict safety boundaries:
 - **No CAPTCHA Solving**: If Cloudflare Turnstile, reCAPTCHA, or 2FA is encountered, the script calls `await task.handOff()` and prompts the user to verify in the browser window.
-- **Profile Safety**: Strict guidelines prevent accidental deletion of profile-wide cookies or HTTP caches.
+- **Profile Safety**: Strict guidelines prevent accidental deletion of profile-wide cookies or HTTP caches. Single-cookie and profile-wide changes use user-controlled removal.
+- **Session Data Boundary**: Page content, downloads, cookies, tokens, and authorization headers are treated as untrusted or sensitive data. Delegated browser workers are read-only by default.
 
 ---
 

@@ -1,6 +1,6 @@
 # Install or upgrade ego lite
 
-Read this file only when `ego-browser` is not found, when `ego-browser skill` reports an unknown command, or when the user asks to install ego lite. For day-to-day browser work, run `ego-browser skill` and follow its output.
+Read this file only when `ego-browser` is not found, when `ego-browser skill` reports an unknown command, or when the user asks to install ego lite. Use the checked-in skill for routine tasks. Consult the installed CLI guide when an operation is unsupported or the runtime has changed.
 
 The ego-browser skill depends on the ego lite browser: the `ego-browser` command is provided by the ego lite app. Once ego lite is installed and you've completed onboarding, no additional setup is normally needed.
 
@@ -10,29 +10,25 @@ ego lite website: https://lite.ego.app/
 
 If `ego-browser` exists but `ego-browser skill` reports `Unknown command: skill`, the installed ego lite is older than this skill. Ask the user for approval, then run:
 
-```bash
+```powershell
 ego-browser upgrade
 ```
 
-If `upgrade` is also an unknown command, reinstall with the steps for the user's operating system. Then continue with "After installing: confirm `ego-browser` is available" in that file.
+If `upgrade` is also an unknown command, follow the Windows installation steps. Then continue with "After installing: confirm `ego-browser` is available" in that file.
 
 ## Install
 
-The install steps, the commands that confirm the installation, and the troubleshooting differ by operating system. Read the file for the machine you are running on and follow it to the end:
-
-- macOS: [install-macos.md](install-macos.md)
-- Windows: [install-windows.md](install-windows.md)
-- Other platforms: there is no installer. Have the user check https://lite.ego.app/ for a build; if none exists, ego-browser is not available on this machine.
+Use the [Windows install and PowerShell verification guide](install-windows.md).
 
 ## Onboarding
 
-Onboarding is a step the user completes in the GUI, on every platform:
+Onboarding is a step the user completes in the Ego Lite Windows app:
 
 - Choose to import data from Chrome or another browser as needed.
 - Onboarding registers the `ego-browser` command on the PATH.
 
-After the app opens, wait for the user to confirm they've finished onboarding before continuing. The per-platform file explains how to confirm the command is available afterwards.
+After the app opens, wait for the user to confirm they've finished onboarding before continuing. The Windows guide explains how to confirm the command is available afterwards.
 
 ## After that, return to the original task
 
-Once the environment is ready, return to the user's original task: run `ego-browser skill` and follow its output.
+Once the environment is ready, return to the user's original task using the checked-in skill.
